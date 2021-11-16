@@ -11,9 +11,9 @@ for the camera, like such:
 
 (the orientation object should be empty and have default transform)
 
-Player                                                                                                                                       
- Orientation                                                                                                                                 
-  Camera
+Player (main object, and where the script goes)                                                                                                                                
+ Orientation (child of player)                                                                                                                                 
+  Camera (child of orientation)
 
 Walk Speed and Run Speed are self-explanitory, being used to controll the players movement speed.
 
