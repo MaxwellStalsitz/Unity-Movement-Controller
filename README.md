@@ -11,8 +11,8 @@ for the camera, like such:
 
 (the orientation object should be empty and have default transform)
 
-Player
- Orientation 
+Player /n
+ Orientation /n
   Camera
 
 Walk Speed and Run Speed are self-explanitory, being used to controll the players movement speed.
