@@ -1,10 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 [RequireComponent(typeof(CharacterController))]
-public class RealisticMovementScript : MonoBehaviour
+public class CharacterControllerMovement : MonoBehaviour
 {
     [SerializeField] public Transform player;
     [SerializeField] public Transform orientation;
@@ -33,23 +32,17 @@ public class RealisticMovementScript : MonoBehaviour
     private float gravityForce = 9.81f;
     
     private bool isJumping;
-    private bool isRunning;
     private float movementSpeed;
     private CharacterController charController;
-    private Animator playerAnimator;
 
     private Vector2 movement = Vector2.zero;
     private Vector2 movementVelocity = Vector2.zero;
-
-    private Vector3 playerScale;
 
     float velocityY = 0.0f;
     
     void Start()
     {
         charController = GetComponent<CharacterController>();
-        playerAnimator = GetComponent<Animator>();
-        playerScale = transform.localScale;
         
         if (lockCursor)
         {
@@ -59,7 +52,7 @@ public class RealisticMovementScript : MonoBehaviour
 
         if (charController == null)
         {
-            Debug.LogWarning("bruh you is aint got no character controller fool");
+            Debug.LogWarning("no character controller attached");
         }
     }
 
@@ -81,7 +74,6 @@ public class RealisticMovementScript : MonoBehaviour
 
     private void PlayerMovement()
     {
-
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
         
@@ -109,18 +101,7 @@ public class RealisticMovementScript : MonoBehaviour
 
     private void PlayerAnimation()
     {
-        if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
-        {
-            playerAnimator.SetBool("isMoving", true);
-        }
-        else
-        {
-            playerAnimator.SetBool("isMoving", false);
-
-        }
-
-        playerAnimator.SetBool("isRunning", isRunning);
-        playerAnimator.SetBool("isJumping", isJumping);
+       //animation would go here, if you were to implement it
     }
 
     private void DeclareMovementSpeeds()
@@ -128,12 +109,10 @@ public class RealisticMovementScript : MonoBehaviour
         if (Input.GetKey(runKey))
         {
             movementSpeed = Mathf.Lerp(movementSpeed, runSpeed, Time.deltaTime * runBuildUp);
-            isRunning = true;
         }   
         else
         {   
             movementSpeed = Mathf.Lerp(movementSpeed, walkSpeed, Time.deltaTime * runBuildUp);
-            isRunning = false;
         }
     }
 
