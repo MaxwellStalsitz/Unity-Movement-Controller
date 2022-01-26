@@ -38,5 +38,10 @@ Lock Cursor, well, locks the cursor
 
 Gravity Multiplier simply multiplies the gravity being added to the player.
 
-And Finally, use animation determines whether or not to add animation to the player, which calls a function that can be customized depending on your 
+Use animation, determines whether or not to add animation to the player, which calls a function that can be customized depending on your 
 specific needs.
+
+Look Script:
+ The look script should attach to the orientation object, setting the main camera object to the main camera variable associated with the script. 
+ The Look script will rotate the camera freely, and move the player towards where the camera is facing. The only other variable in the script is "sensitivity", 
+ this just determines how fast you can rotate the camera.
