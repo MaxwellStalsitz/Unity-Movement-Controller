@@ -19,11 +19,19 @@ public class CharacterControllerMovement : MonoBehaviour
     [SerializeField] private AnimationCurve jumpFallOff;
     [SerializeField] private float jumpMultiplier = 10f;
     [SerializeField] public KeyCode jumpKey = KeyCode.Space;
+    private bool canJump = true;
 
     [Header("Slopes")]
     [SerializeField] private float slopeForce = 3f;
     [SerializeField] private float slopeForceRayLength = 1.5f;
     
+    [Header("Crouching")]
+    [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
+    [SerializeField] private float crouchTime = 0.2f;
+    private bool isCrouching;
+    private float currentCrouchVelocity;
+    private float currentHeight = 1f;
+
     [Header("Other")]
     [SerializeField] private bool lockCursor = true;
     [Range(1,10)]
@@ -43,7 +51,7 @@ public class CharacterControllerMovement : MonoBehaviour
     void Start()
     {
         charController = GetComponent<CharacterController>();
-        
+
         if (lockCursor)
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -61,6 +69,8 @@ public class CharacterControllerMovement : MonoBehaviour
         PlayerMovement();
         DeclareMovementSpeeds();
         JumpInput();
+        CrouchInput();
+        CrouchSmoothing();
 
         if (useAnimation)
         {
@@ -102,7 +112,7 @@ public class CharacterControllerMovement : MonoBehaviour
 
     private void DeclareMovementSpeeds()
     {
-        if (Input.GetKey(runKey))
+        if(Input.GetKey(runKey))
         {
             movementSpeed = Mathf.Lerp(movementSpeed, runSpeed, Time.deltaTime * runBuildUp);
         }   
@@ -138,7 +148,7 @@ public class CharacterControllerMovement : MonoBehaviour
 
     private void JumpInput()
     {
-        if (Input.GetKey(jumpKey) && !isJumping)
+        if (Input.GetKey(jumpKey) && !isJumping && canJump)
         {
             isJumping = true;
             StartCoroutine(JumpEvent());
@@ -163,4 +173,63 @@ public class CharacterControllerMovement : MonoBehaviour
         isJumping = false;
         
     }
+
+    private void CrouchInput()
+    {
+        if (!isJumping)
+        {
+            if (Input.GetKey(crouchKey))
+            {
+                if (!isCrouching)
+                {
+                    StartCoroutine(ChangeCrouching(true));
+                }
+
+                canJump = false;
+            }
+            else
+            {
+                if (isCrouching)
+                {
+                    StartCoroutine(ChangeCrouching(false));
+                }
+
+                canJump = true;
+            }
+        }
+    }
+
+    private IEnumerator ChangeCrouching(bool crouchChangeState)
+    {
+        if (!isCrouching)
+        {
+            isCrouching = true;
+        }
+        else
+        {
+            if (!Physics.Raycast(transform.position, Vector3.up, 1f))
+            {
+                isCrouching = false;
+            }
+        }
+
+        yield return new WaitForSeconds(crouchTime * crouchTime);
+        isCrouching = crouchChangeState;
+
+    }
+
+    private void CrouchSmoothing()
+    {
+        transform.localScale = new Vector3(transform.localScale.x, currentHeight, transform.localScale.z);
+        
+        if (isCrouching)
+        {
+            currentHeight = Mathf.SmoothDamp(currentHeight, 0.5f, ref currentCrouchVelocity, crouchTime);
+        }
+        else
+        {
+            currentHeight = Mathf.SmoothDamp(currentHeight, 1f, ref currentCrouchVelocity, crouchTime);
+        }
+    }
+
 }
